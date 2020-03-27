@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+
+
+int count_digits (char *s)
+{
+    int i = 0;
+
+    while (s[i] !='\0')
+        i++;
+
+    return i;
+}
+
+
+int main()
+{
+
+    char s [100] ;
+    gets(s);
+
+    printf ( " %d\n" ,  count_digits(s) ) ;
+
+    return 0;
+}
