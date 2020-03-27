@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+
+
+char *str_chr (char *s, char c)
+{
+    int i = 0;
+    int n;
+     for (i = 0; s[i] != '\0'; i++) {
+        if (s[i] == c) {
+        n=i;
+        }
+     }
+    return n;
+}
+
+
+int main()
+{
+    char c;
+    printf("enter line\n");
+    char s [100] ;
+    gets(s);
+    printf("enter symbol\n");
+    scanf("%c" , &c );
+
+    printf ( " address  is %d\n" , str_chr(s,c) ) ;
+
+    return 0;
+}
