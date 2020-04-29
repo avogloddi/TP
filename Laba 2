@@ -1,0 +1,244 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef struct island {
+	int  number;
+	char *opens;
+	char *closes;
+	struct island * next;
+} island;
+
+island *create (int number){
+
+    island *i = (island*)malloc(sizeof(island));
+    i->number = number;
+    i->opens = "9-00";
+    i->closes = "18-00";
+    i->next = NULL;
+    return i; }
+
+
+void display(island *start){
+	if (start == NULL) /*проверка списка на пустоту*/
+    return NULL;
+
+    island *i = start;
+	for ( ; i != NULL; i=i->next){
+		printf("Name %d, open %s, close %s\n", i->number, i->opens, i->closes);
+	}
+}
+
+void add_island_end (island *start , int number)  
+{   if (start == NULL) /*проверка списка на пустоту*/
+    return NULL;
+
+    island *p = start;
+    while (p->next != NULL)
+        {   p= p->next; }
+
+    island *i = (island*)malloc(sizeof(island));
+    p-> next = i;
+
+    i->number = number;
+    i->next = NULL;
+    i-> opens = "5-00";
+    i-> closes = "21-00";
+
+    return i ;
+}
+
+void delete_end (island *start)  
+{   int r=0;  /*если в списке есть только один элемент, удаляем его*/
+    if (start -> next == NULL) 
+      {
+      r = start -> number ;
+      free (start);
+      return r;
+      }
+
+    island *i= start;
+    while (i->next->next != NULL)
+      {
+          i= i->next;
+      }
+    r=i->next->number;
+    free(i->next);
+    i->next =NULL;
+    return r;
+}
+
+void find(island *start, int user_island) {
+
+island *i = start;
+while (i != NULL)
+    { if (i->number == user_island)
+        {   printf("the desired island %d, it open %s, it close %s\n", i->number, i->opens, i->closes);
+            break; /*чтобы выйти из цикла при нахождении первого элемента*/
+        }
+      i= i-> next;
+    }
+    return -1; 
+}
+
+
+void release(island *start) 
+{
+    island *i = start;
+    island *next = NULL;
+    for ( ; i != NULL ; i = next){
+        next = i->next;
+        free(i->number);
+        free(i);
+	}
+}
+
+
+int main(){
+
+ printf("chose what you want do:\n");
+ printf("1. create first island in list\n");
+ printf("2. create last island in list\n");
+ printf("3. delete last island in list\n");
+ printf("4. show a list\n" );
+ printf("5. delete a list\n ");
+ printf("6. find island\n");
+ printf("7. exit\n");
+ printf("your selection :\n");
+
+ int a;
+ scanf ("%d", &a);
+ 
+ switch(a)
+ {
+        case 1 : 
+               {
+                int number;
+                printf("enter the name of first island\n");
+                scanf("%d",&number);
+                struct island *island0 = create(number);
+                printf ("your list now:\n");
+                display(island0);
+                break;}
+        case 2 :  
+            {
+                island *start = NULL;
+                island *i = NULL;
+                island *next = NULL;
+                int number;
+                printf("creating a test list. enter the numbers of the Islands(3)\n");
+                scanf("%d",&number);
+                island *island0 = create(number);
+                scanf("%d",&number);
+                island *island1 = create(number);
+                scanf("%d",&number);
+                island *island2 = create(number);
+
+                island0->next = island1;
+                island1->next = island2;
+
+                printf("enter the number of the island you want to put at the end of the list\n");
+                int n;
+                scanf("%d", &n);
+
+                add_island_end(island0,n);
+                display(island0);
+                break; }
+        case 3 :  /*+*/
+            {
+                island *start = NULL;
+                island *i = NULL;
+                island *next = NULL;
+                int number;
+                printf("creating a test list. enter the numbers of the Islands(3)\n");
+                scanf("%d",&number);
+                island *island0 = create(number);
+                scanf("%d",&number);
+                island *island1 = create(number);
+                scanf("%d",&number);
+                island *island2 = create(number);
+                island0->next = island1;
+                island1->next = island2;
+                printf("test list:\n");
+                display(island0);
+
+                delete_end(island0);
+                printf("list with the last item deleted\n");
+                display(island0);
+
+            break; }
+
+        case 4 : 
+            {
+                island *start = NULL;
+                island *i = NULL;
+                island *next = NULL;
+                int number;
+                printf("creating a test list. enter the numbers of the Islands(3)\n");
+                scanf("%d",&number);
+                island *island0 = create(number);
+                scanf("%d",&number);
+                island *island1 = create(number);
+                scanf("%d",&number);
+                island *island2 = create(number);
+                island0->next = island1;
+                island1->next = island2;
+                printf("your list:\n");
+            display(island0);
+            break;}
+
+        case 5: 
+            {
+                island *start = NULL;
+                island *i = NULL;
+                island *next = NULL;
+                int number;
+            printf("creating a test list. enter the numbers of the Islands(3)\n");
+            scanf("%d",&number);
+            island *island0 = create(number);
+            scanf("%d",&number);
+            island *island1 = create(number);
+            scanf("%d",&number);
+            island *island2 = create(number);
+            island0->next = island1;
+            island1->next = island2;
+            printf("test list:\n");
+            display(island0);
+
+            release(island0);
+            printf("your list been deleted");
+            break;
+            }
+
+            case 6 : 
+                {
+                    island *start = NULL;
+                    island *i = NULL;
+                    island *next = NULL;
+                    int number;
+                    printf("creating a test list. Enter the numbers of the Islands(3)\n");
+                    scanf("%d",&number);
+                    island *island0 = create(number);
+                    scanf("%d",&number);
+                    island *island1 = create(number);
+                    scanf("%d",&number);
+                    island *island2 = create(number);
+                    island0->next = island1;
+                    island1->next = island2;
+
+                    int user_island;
+                    printf("enter the number of island which you want search\n");
+                    scanf("%d", &user_island);
+                    find(island0, user_island);
+
+                    break;}
+
+            case 7 :
+                {
+                    break;
+                }
+            default : printf("incorrect selection");
+
+ }
+return 0;
+}
