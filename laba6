@@ -1,0 +1,596 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <Windows.h>
+#include <windows.h>
+#include <vector>
+
+
+const int N = 10;
+const int NUM_SHIPS = 9;
+
+int Ships_id = 1;
+int Ships[10] = {0};
+
+void gotoxy( int x, int y)
+{
+    COORD p={ x, y};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE) , p);
+}
+
+void ship_show(int x, int y, int dir, int size_ship)
+{
+    int i;
+    for (i=0;i<size_ship ;i++)
+    {
+        gotoxy (x+1,y+1);
+        printf("#");
+
+        switch(dir)
+        {
+            case 0: x++;
+            break;
+            case 1: y++;
+            break;
+            case 2: x--;
+            break;
+            case 3: y--;
+            break;
+        }
+    }
+}
+
+bool ship_in_map(int x,int y,int dir,int size_ship)
+{
+    int i;
+
+    bool in_map=1;
+    for(i=0;i < size_ship ;i++){
+        if ((x<0)||(y<0)||(x>=N)||(y>=N))
+        {
+            in_map = 0;
+            break;
+        }
+
+
+
+        switch(dir)
+        {
+            case 0: x++;
+            break;
+            case 1: y++;
+            break;
+            case 2: x--;
+            break;
+            case 3: y--;
+            break;
+        }
+    }
+
+    return in_map;
+}
+
+bool set_ship(int map[N][N],int x,int y,int dir, int size_ship)
+{
+    int i;
+    int temp_x = x;
+    int temp_y = y;
+
+    bool setting_is_possible = 1;
+
+    /*проверка возможности постановки корабля*/
+    for(i=0;i < size_ship ;i++){
+        if ((x<0)||(y<0)||(x>=N)||(y>=N))
+        {
+            setting_is_possible = 0;
+            break;
+        }
+        
+        if (map[x][y] >=1) {setting_is_possible = 0; break; }
+        if (y < N-1)
+        if (map[x][y+1] >=1) {setting_is_possible = 0; break; }
+        if (y>0)
+        if (map[x][y-1] >=1) {setting_is_possible = 0; break; }
+        if (x< N-1)
+        if (map[x+1][y] >=1) {setting_is_possible = 0; break; }
+        if ((x<N-1) && (y<N-1))
+        if (map[x+1][y+1] >=1) {setting_is_possible = 0; break; }
+        if ((x<N-1) && (y>0))
+        if (map[x+1][y-1] >=1) {setting_is_possible = 0; break; }
+        if (x>0)
+        if (map[x-1][y] >=1) {setting_is_possible = 0; break; }
+        if ((x>0) && (y<N-1))
+        if (map[x-1][y+1] >=1) {setting_is_possible = 0; break; }
+        if ((x>0) && (y>0))
+        if (map[x-1][y-1] >=1) {setting_is_possible = 0; break; }
+
+
+        switch(dir)
+        {
+            case 0: x++;
+            break;
+            case 1: y++;
+            break;
+            case 2: x--;
+            break;
+            case 3: y--;
+            break;
+        }
+    }
+
+
+    if (setting_is_possible==1)
+    {
+        x = temp_x;
+        y = temp_y;
+
+        for (i=0;i<size_ship ;i++)
+        {
+            map[x][y] = 1;
+            switch(dir)
+            {
+                case 0: x++;
+                break;
+                case 1: y++;
+                break;
+                case 2: x--;
+                break;
+                case 3: y--;
+                break;
+            }
+        }
+
+    }
+    return setting_is_possible;
+}
+
+
+void set_rand_ships (int map[N][N], int size_ship, int ship_id)
+{
+    int i,j,x, y, a;
+
+
+    int dir = 0;
+    int count_ship=0;
+    int count_tact=0;
+
+    while(count_ship < 1)
+    {
+        count_tact++;
+        if (count_tact>1000)
+        {
+            break;
+        }
+        /*первичная позиция*/
+        x=rand()%N;
+        y=rand()%N;
+
+        int temp_x = x;
+        int temp_y = y;
+
+        /*генерация направления*/
+
+
+        bool setting_is_possible = 1;
+
+        dir = rand()%4;
+
+        /*проверка возможности постановки корабля*/
+        for(i=0;i < size_ship ;i++){
+            if ((x<0)||(y<0)||(x>=N)||(y>=N))
+            {
+                setting_is_possible = 0;
+                break;
+            }
+            if ((map[x][y] >= 1)||(map[x][y+1] >= 1)||(map[x][y-1] >= 1)||(map[x+1][y] >= 1)||(map[x+1][y+1] >= 1)||(map[x+1][y-1] >= 1)||(map[x-1][y] >= 1)||(map[x-1][y+1] >= 1)||(map[x-1][y-1] >= 1)){
+                setting_is_possible = 0;
+                break;
+            }
+
+            switch(dir)
+            {
+                case 0: x++;
+                break;
+                case 1: y++;
+                break;
+                case 2: x--;
+                break;
+                case 3: y--;
+                break;
+            }
+        }
+
+
+        if (setting_is_possible==1)
+        {
+            x = temp_x;
+            y = temp_y;
+
+            for (i=0;i<size_ship ;i++)
+            {
+                map[x][y] = ship_id;
+                switch(dir)
+                {
+                    case 0: x++;
+                    break;
+                    case 1: y++;
+                    break;
+                    case 2: x--;
+                    break;
+                    case 3: y--;
+                    break;
+                }
+            }
+
+            count_ship++;
+        }
+    }
+}
+
+void map_show (int map[N][N], int mask[N][N], bool useMask)
+{
+
+    int i, j;
+    printf(" ");
+
+    for (i=0; i<N;i++)
+    { /*нумерация столбцов*/
+        printf("%d",i);
+    }
+    printf("\n");
+
+    for (i=0; i<N;i++)
+    { /*нумерация строк*/
+
+        printf("%d",i);
+
+        for (j=0;j<N;j++)
+        {
+            if(mask[j][i]==1 || useMask == 0)
+            {
+                if(map[j][i]==0)
+                {
+                    printf("-");
+                }
+                else if (map[j][i] == - 1)
+                {
+                    printf("X");
+                }
+                else if (map[j][i] == - 2)
+                {
+                    printf(".");
+                }
+                else
+                {
+                    printf("%d", map[j][i]);
+                }
+            }
+            else
+            {
+                printf(" ");
+            }
+
+        }
+        printf("\n");
+    }
+}
+
+int shot (int map[N][N], int x, int y, int ships[NUM_SHIPS+1], int mask[N][N])
+{
+    int result = 0;
+
+    if ((map [x][y] == -1) || (map [x][y] == -2))
+    {
+        result = 3;
+    }
+
+    else if (map[x][y] >=1)
+        { /*количество жизней*/
+            ships[map[x][y]]--;
+            if (ships[map[x][y]] <=0)
+            {
+                result = 2;
+            }
+            else
+            {
+                result = 1;
+            }
+            map [x][y] = -1;
+        }
+    else {
+        map [x][y] = -2;
+    }
+    mask[x][y]= 1;
+
+    printf("%d\n", result);
+    Sleep(1000);
+
+
+    return result;
+}
+
+int main()
+{
+    int N = 10;
+    int i = 1,j;
+
+
+    while(true){
+
+        int map[10][10] = {0};
+        int map2[10][10] = {0};
+
+        int mask[10][10] = {0};
+        int mask2[10][10] = {0};
+
+        int ships1[10] = {0, 4, 3, 3, 2, 2, 2, 1, 1, 1};
+        int ships2[10] = {0, 4, 3, 3, 2, 2, 2, 1, 1, 1};
+
+        for (i; i <= NUM_SHIPS; i++){
+            set_rand_ships(map2, ships2[i], i);
+        }
+        i = 0;
+        for (i; i <= NUM_SHIPS; i++){
+            set_rand_ships(map, ships1[i], i);
+        }
+
+        int x = 0;
+        int y = 0;
+
+
+        int firstHitX = 0, firstHitY = 0;
+        int mode = 0;
+        int xBot = 0, i = 0, j = 0, dir = 0, yBot = 0;
+
+        vector <int> dirs;
+
+        dirs.push_back(3);
+        dirs.push_back(2);
+        dirs.push_back(1);
+        dirs.push_back(0);
+
+        bool winHuman = 0;
+        bool winBot = 0;
+
+        bool turn = 1;
+
+        while ((winHuman == false) && (winBot == false))
+        {
+            int resultShot = 0;
+
+            do
+            {
+                map_show(map, mask, 0);
+                printf("\n");
+                map_show(map2, mask2, 1);
+
+                if (turn == 1)
+                {
+                    printf("Enter the coordinates of the goal\n");
+                    scanf("%d", &x );
+                    scanf("%d", &y );
+                    resultShot = shot(map2, x, y, ships2, mask2);
+
+                        if (resultShot == 1)
+                    {
+                        printf("Wounded\n");
+                    }
+                    else if (resultShot == 2)
+                    {
+                        printf("Killed\n");
+                    }
+                    else
+                    {
+                       bool died = 1;
+                       int i=1;
+                       for (i; i <= NUM_SHIPS; i++)
+                        {
+                            if (ships2[i] != 0)
+                            {
+                                died = 0;
+                                break;
+                            }
+                        }
+                       if (died == 1)
+                       {
+                           winHuman=1;
+                           break;
+                       }
+                        printf("Blunder\n");
+                    }
+                }
+                else
+                {
+                    printf("Computer running\n");
+                    Sleep(1000);
+
+
+            if(mode == 0)
+            {
+                    do
+                    {
+                        xBot = rand()%N;
+                        yBot = rand()%N;
+
+                        resultShot = shot(map, xBot, yBot, ships1, mask);
+                    } while  (resultShot == 3);
+
+
+                if (resultShot == 1)
+                {
+                    mode = 1;
+
+                    firstHitX = xBot;
+                    firstHitY = yBot;
+
+                    if (!dirs.empty())
+                    {
+                    dir = dirs[dirs.size()-1];
+                    dirs_pop.back();
+                    }
+
+                    printf("Wounded\n");
+                }
+                else if (resultShot == 2)
+                {
+                   bool died = 1;
+                   int i=1;
+                   for (i; i <= NUM_SHIPS; i++)
+                    {
+                        if (ships1[i] != 0)
+                        {
+                            died = 0;
+                            break;
+                        }
+                    }
+                   if (died == 1)
+                   {
+                       winBot=1;
+                       break;
+                   }
+                    printf("Killed\n");
+                }
+                else
+                {
+                    printf("Blunder\n");
+                }
+
+            }
+
+            else if(mode == 1)
+                {
+                    bool changeDir = 0;
+
+                    if (dir == 0)
+                    {                        /*влево*/
+                        if (xBot>0)
+                        {
+                            xBot -= 1;
+                        }
+                        else
+                        {
+                            changeDir = 1;
+                        }
+                    }
+                    else if (dir == 1)
+                    {                       /*вправо*/
+                        if (xBot < N-1)
+                        {
+                            xBot += 1;
+                        }
+                        else
+                        {
+                            changeDir = 1;
+                        }
+                    }
+                    else if (dir == 2)
+                    {                    /*вверх*/
+                        if (yBot > 0)
+                        {
+                            yBot -= 1;
+                        }
+                        else
+                        {
+                            changeDir = 1;
+                        }
+                    }
+                    else if (dir == 3)
+                    {                           /*вниз*/
+                        if (yBot < N-1)
+                        {
+                            yBot += 1;
+                        }
+                        else
+                        {
+                            changeDir = 1;
+                        }
+                    }
+
+                    if (changeDir == 1)
+                    {
+                        if (!dirs.empty())
+                        {
+                            dir = dirs[dirs.size()-1];
+                            dirs_pop.back();
+                        }
+                        xBot = firstHitX;
+                        yBot = firstHitY;
+
+                        continue;
+                    }
+
+                resultShot = shot(map, xBot, yBot, ships1, mask);
+
+                if (resultShot == 1)
+                {
+                    printf("Wounded\n");
+                }
+                else if (resultShot == 2)
+                {
+                    mode = 0;
+
+                    dirs.clear();
+
+                    dirs.push_back(3);
+                    dirs.push_back(2);
+                    dirs.push_back(1);
+                    dirs.push_back(0);
+
+                   bool died = 1;
+                   int i=1;
+                   for (i; i <= NUM_SHIPS; i++)
+                    {
+                        if (ships1[i] != 0)
+                        {
+                            died = 0;
+                            break;
+                        }
+                    }
+                   if (died == 1)
+                   {
+                       winBot=1;
+                       break;
+                   }
+
+                    printf("Killed\n");
+                }
+                else
+                {
+                    if (!dirs.empty())
+                        {
+                            dir = dirs[dirs.size()-1];
+                            dirs_pop.back();
+                        }
+                    xBot = firstHitY;
+                    yBot = firstHitY;
+                    printf("Blunder\n");
+                }
+
+            }
+
+        }
+                Sleep(1000);
+                system("cls");
+
+
+            } while(resultShot != 0);
+
+            turn = !turn;
+        }
+         if (winHuman == true)
+         {
+             printf("You win ! \n");
+         }
+         else if (winBot == true)
+         {
+             printf("You lose ! \n");
+         }
+
+        getch();
+        system("cls");
+    }
+
+    system("pause");
+    return 0;
+}
