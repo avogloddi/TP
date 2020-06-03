@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <Windows.h>
 #include <windows.h>
-#include <vector>
 
 
 const int N = 10;
@@ -86,7 +85,7 @@ bool set_ship(int map[N][N],int x,int y,int dir, int size_ship)
             setting_is_possible = 0;
             break;
         }
-        
+
         if (map[x][y] >=1) {setting_is_possible = 0; break; }
         if (y < N-1)
         if (map[x][y+1] >=1) {setting_is_possible = 0; break; }
@@ -232,18 +231,18 @@ void map_show (int map[N][N], int mask[N][N], bool useMask)
 {
 
     int i, j;
-    printf(" ");
+    printf("  ");
 
     for (i=0; i<N;i++)
     { /*нумерация столбцов*/
-        printf("%d",i);
+        printf(" %d",i);
     }
     printf("\n");
 
     for (i=0; i<N;i++)
     { /*нумерация строк*/
 
-        printf("%d",i);
+        printf(" %d",i);
 
         for (j=0;j<N;j++)
         {
@@ -251,24 +250,24 @@ void map_show (int map[N][N], int mask[N][N], bool useMask)
             {
                 if(map[j][i]==0)
                 {
-                    printf("-");
+                    printf(" -");
                 }
                 else if (map[j][i] == - 1)
                 {
-                    printf("X");
+                    printf(" X");
                 }
                 else if (map[j][i] == - 2)
                 {
-                    printf(".");
+                    printf(" .");
                 }
                 else
                 {
-                    printf("%d", map[j][i]);
+                    printf(" %d", map[j][i]);
                 }
             }
             else
             {
-                printf(" ");
+                printf("  ");
             }
 
         }
@@ -302,10 +301,6 @@ int shot (int map[N][N], int x, int y, int ships[NUM_SHIPS+1], int mask[N][N])
         map [x][y] = -2;
     }
     mask[x][y]= 1;
-
-    printf("%d\n", result);
-    Sleep(1000);
-
 
     return result;
 }
@@ -342,14 +337,7 @@ int main()
         int firstHitX = 0, firstHitY = 0;
         int mode = 0;
         int xBot = 0, i = 0, j = 0, dir = 0, yBot = 0;
-
-        vector <int> dirs;
-
-        dirs.push_back(3);
-        dirs.push_back(2);
-        dirs.push_back(1);
-        dirs.push_back(0);
-
+        bool changeDir;
         bool winHuman = 0;
         bool winBot = 0;
 
@@ -372,13 +360,23 @@ int main()
                     scanf("%d", &y );
                     resultShot = shot(map2, x, y, ships2, mask2);
 
-                        if (resultShot == 1)
+                    if (resultShot == 1)
                     {
                         printf("Wounded\n");
+                        printf("        _           \n");
+                        printf("   ____|_|__!!!__ \n");
+                        printf("   \\  . .   \\_/ /   \n");
+                        printf("~~~ \\__________/ ~~~\n");
+                        Sleep(1000);
                     }
                     else if (resultShot == 2)
                     {
                         printf("Killed\n");
+                        printf("   |\\  !!!!!\n");
+                        printf("   | \\/\\    \n");
+                        printf("   | .\\/    \n");
+                        printf("~~~|__.\\ ~~~\n");
+                        Sleep(1000);
                     }
                     else
                     {
@@ -398,6 +396,12 @@ int main()
                            break;
                        }
                         printf("Blunder\n");
+                        printf("        ...        \n");
+                        printf("        . .   ???  \n");
+                        printf("  ................ \n");
+                        printf("   .  . . .     .  \n");
+                        printf("~~~ ........... ~~~\n");
+                        Sleep(1000);
                     }
                 }
                 else
@@ -424,13 +428,19 @@ int main()
                     firstHitX = xBot;
                     firstHitY = yBot;
 
-                    if (!dirs.empty())
-                    {
-                    dir = dirs[dirs.size()-1];
-                    dirs_pop.back();
-                    }
+                    dir = 0;
+                    changeDir = 0;
 
+                    printf("%d\n", xBot);
+                    Sleep(1000);
+                    printf("%d\n", yBot);
+                    Sleep(1000);
                     printf("Wounded\n");
+                    printf("        _           \n");
+                    printf("   ____|_|__!!!__ \n");
+                    printf("   \\  . .   \\_/ /   \n");
+                    printf("~~~ \\__________/ ~~~\n");
+                    Sleep(1000);
                 }
                 else if (resultShot == 2)
                 {
@@ -449,93 +459,117 @@ int main()
                        winBot=1;
                        break;
                    }
+                    printf("%d\n", xBot);
+                    Sleep(1000);
+                    printf("%d\n", yBot);
+                    Sleep(1000);
                     printf("Killed\n");
+                    printf("   |\\  !!!!!\n");
+                    printf("   | \\/\\    \n");
+                    printf("   | .\\/    \n");
+                    printf("~~~|__.\\ ~~~\n");
+                    Sleep(1000);
                 }
                 else
                 {
+                    printf("%d\n", xBot);
+                    Sleep(1000);
+                    printf("%d\n", yBot);
+                    Sleep(1000);
                     printf("Blunder\n");
+                    printf("        ...        \n");
+                    printf("        . .   ???  \n");
+                    printf("  ................ \n");
+                    printf("   .  . . .     .  \n");
+                    printf("~~~ ........... ~~~\n");
+                    Sleep(1000);
                 }
 
             }
 
-            else if(mode == 1)
-                {
-                    bool changeDir = 0;
-
-                    if (dir == 0)
-                    {                        /*влево*/
-                        if (xBot>0)
-                        {
-                            xBot -= 1;
-                        }
-                        else
-                        {
-                            changeDir = 1;
-                        }
-                    }
-                    else if (dir == 1)
-                    {                       /*вправо*/
-                        if (xBot < N-1)
-                        {
-                            xBot += 1;
-                        }
-                        else
-                        {
-                            changeDir = 1;
-                        }
-                    }
-                    else if (dir == 2)
-                    {                    /*вверх*/
-                        if (yBot > 0)
-                        {
-                            yBot -= 1;
-                        }
-                        else
-                        {
-                            changeDir = 1;
-                        }
-                    }
-                    else if (dir == 3)
-                    {                           /*вниз*/
-                        if (yBot < N-1)
-                        {
-                            yBot += 1;
-                        }
-                        else
-                        {
-                            changeDir = 1;
-                        }
-                    }
-
-                    if (changeDir == 1)
+             else if(mode == 1)
+            {
+                if (dir == 0)
+                {                        /*влево*/
+                    if (xBot>0 && changeDir == 0)
                     {
-                        if (!dirs.empty())
-                        {
-                            dir = dirs[dirs.size()-1];
-                            dirs_pop.back();
-                        }
-                        xBot = firstHitX;
-                        yBot = firstHitY;
-
-                        continue;
+                        xBot -= 1;
                     }
+                    else
+                    {
+                        changeDir = 1;
+                    }
+                }
+                else if (dir == 1)
+                {                       /*вправо*/
+                    if (xBot < N-1 && changeDir == 0)
+                    {
+                        xBot += 1;
+                    }
+                    else
+                    {
+                        changeDir = 1;
+                    }
+                }
+                else if (dir == 2)
+                {                    /*вверх*/
+                    if (yBot > 0 && changeDir == 0)
+                    {
+                        yBot -= 1;
+                    }
+                    else
+                    {
+                        changeDir = 1;
+                    }
+                }
+                else if (dir == 3)
+                {                           /*вниз*/
+                    if (yBot < N-1 && changeDir == 0)
+                    {
+                        yBot += 1;
+                    }
+                    else
+                    {
+                        changeDir = 1;
+                    }
+                }
+
+                if (changeDir == 1)
+                {
+                    if (dir == 0){
+                        dir = 1;
+                    }
+                    else if (dir == 1){
+                        dir = 2;
+                    }
+                    else {
+                        dir = 3;
+                    }
+                    xBot = firstHitX;
+                    yBot = firstHitY;
+                    changeDir = 0;
+                }
 
                 resultShot = shot(map, xBot, yBot, ships1, mask);
 
                 if (resultShot == 1)
                 {
+                    printf("%d\n", xBot);
+                    Sleep(1000);
+                    printf("%d\n", yBot);
+                    Sleep(1000);
                     printf("Wounded\n");
+                    printf("        _           \n");
+                    printf("   ____|_|__!!!__ \n");
+                    printf("   \\  . .   \\_/ /   \n");
+                    printf("~~~ \\__________/ ~~~\n");
+                    Sleep(1000);
                 }
                 else if (resultShot == 2)
                 {
                     mode = 0;
-
-                    dirs.clear();
-
-                    dirs.push_back(3);
-                    dirs.push_back(2);
-                    dirs.push_back(1);
-                    dirs.push_back(0);
+                    dir = 0;
+                    changeDir = 0;
 
                    bool died = 1;
                    int i=1;
@@ -552,19 +586,33 @@ int main()
                        winBot=1;
                        break;
                    }
-
+                    printf("%d\n", xBot);
+                    Sleep(1000);
+                    printf("%d\n", yBot);
+                    Sleep(1000);
                     printf("Killed\n");
+                    printf("   |\\  !!!!!\n");
+                    printf("   | \\/\\    \n");
+                    printf("   | .\\/    \n");
+                    printf("~~~|__.\\ ~~~\n");
+                    Sleep(1000);
                 }
-                else
+                else if (resultShot == 0)
                 {
-                    if (!dirs.empty())
-                        {
-                            dir = dirs[dirs.size()-1];
-                            dirs_pop.back();
-                        }
+                    changeDir = 1;
                     xBot = firstHitY;
                     yBot = firstHitY;
+                    printf("%d\n", xBot);
+                    Sleep(1000);
+                    printf("%d\n", yBot);
+                    Sleep(1000);
                     printf("Blunder\n");
+                    printf("        ...        \n");
+                    printf("        . .   ???  \n");
+                    printf("  ................ \n");
+                    printf("   .  . . .     .  \n");
+                    printf("~~~ ........... ~~~\n");
+                    Sleep(1000);
                 }
 
             }
@@ -581,10 +629,22 @@ int main()
          if (winHuman == true)
          {
              printf("You win ! \n");
+             printf("   _____    \n");
+             printf(" _|     |_  \n");
+             printf("//| win |\\\\ \n");
+             printf("\\\\|     |// \n");
+             printf("   \\   /    \n");
+             printf("    \\ /     \n");
+             printf(" !   |   !  \n");
+             printf("    _|_     \n");
          }
          else if (winBot == true)
          {
              printf("You lose ! \n");
+             printf("  ____   \n");
+             printf(" /    \\  \n");
+             printf("| X  X | \n");
+             printf(" \\_<>_/  \n");
          }
 
         getch();
